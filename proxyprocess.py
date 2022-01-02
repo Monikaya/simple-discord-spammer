@@ -1,15 +1,12 @@
 from itertools import cycle
 
-
 def GetProxies():
     with open('data/proxies.txt', 'r') as temp_file:
         proxies = [line.rstrip('\n') for line in temp_file]
     return proxies
 
-
 proxies = GetProxies()
 proxy_pool = cycle(proxies)
-
 
 def GetProxy():
     proxy = next(proxy_pool)

@@ -44,10 +44,10 @@ async def join(invcode, token, broxy):
 async def startpp(invcode, token, proxy):
     async with AsyncClient(proxies={'https://': 'http://' + proxy}) as broxy:
         res = await leave(invcode, token, broxy)
-#    if res.status_code == 204:
-#        print("thingie sent")
-#    else:
-#        print(res.text)
+    if res.status_code == 204:
+        print("joined server")
+    else:
+        print(res.text)
 
 
 async def main():
@@ -55,7 +55,7 @@ async def main():
         tokens = [line.rstrip('\n') for line in tokns]
     print("tokens did done")
 
-    invcode = "e5qPztaV"
+    invcode = input("what invite would you like to join? (last string, no discord.gg/): ")
 
     async with TaskPool(2_00) as pool:
         for token in tokens:
