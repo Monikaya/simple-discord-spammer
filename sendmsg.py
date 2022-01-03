@@ -2,6 +2,8 @@ import asyncio
 import os
 import random
 import string
+import time
+
 import proxyprocess
 
 try:
@@ -16,7 +18,7 @@ except ImportError:
 async def rc(len):
     return os.urandom(len).hex()[len:]
 
-async def join(invcode, token, broxy):
+async def sendmsg(msgcontent, channelid, token, broxy):
     headers = {
         'accept': '*/*',
         'accept-encoding': 'gzip, deflate',
@@ -25,7 +27,7 @@ async def join(invcode, token, broxy):
         'cookie': f'__dcfduid={await rc(43)}; __sdcfduid={await rc(96)}; __stripe_mid={await rc(18)}-{await rc(4)}-{await rc(4)}-{await rc(4)}-{await rc(18)}; locale=en-GB; __cfruid={await rc(40)}-{"".join(random.choice(string.digits) for i in range(10))}',
         'content-type': 'application/json',
         'origin': 'https://discord.com',
-        'referer': f'https://discord.com/api/v9/invites/{invcode}',
+        'referer': f'https://discord.com/api/v9/channels/{channelid}/messages',
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
@@ -36,33 +38,41 @@ async def join(invcode, token, broxy):
     }
 
     try:
-        res = await broxy.post(f"https://discord.com/api/v9/invites/{invcode}", headers=headers, json={}, timeout=100)
+        res = await broxy.post(f"https://discord.com/api/v9/channels/{channelid}/messages", headers=headers, json={"content":f"{msgcontent}","tts":"false"}, timeout=100)
         return res
     except Exception as e:
         print(e)
         pass
 
 
-async def startpp(invcode, token, proxy):
+async def startpp(msgcontent, channelid, token, proxy):
     async with AsyncClient(proxies={'https://': 'http://' + proxy}) as broxy:
-        res = await join(invcode, token, broxy)
+        res = await sendmsg(msgcontent, channelid, token, broxy)
     if res.status_code == 200:
-        print("joined server")
+        print("sent message")
     else:
         print(res.text)
 
+async def getinfo(channelid, msgcontent):
 
-async def getinfo():
     with open('data/tokens.txt', 'r') as tokns:
         tokens = [line.rstrip('\n') for line in tokns]
     print("loaded")
 
-    invcode = input("what invite would you like to join? (last string, no discord.gg/): ")
-
     async with TaskPool(2_00) as pool:
         for token in tokens:
-            await pool.put(startpp(invcode, token, proxyprocess.GetProxy()))
+            await pool.put(startpp(msgcontent, channelid, token, proxyprocess.GetProxy()))
+            time.sleep(1)
+
 
 if __name__ == '__main__':
+    channelid = input("what channel would you like to spam: ")
+    msgcontent = input("what message would you like to spam: ")
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(getinfo())
+    #loop.run_until_complete(getinfo(channelid, msgcontent))
+
+    loop.create_task(getinfo(channelid, msgcontent))
+    loop.run_forever()
+
+
