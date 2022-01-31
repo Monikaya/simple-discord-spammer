@@ -2,6 +2,8 @@ import asyncio
 import os
 import random
 import string
+import time
+
 import requests
 
 
@@ -9,7 +11,8 @@ def rc(len):
     return os.urandom(len).hex()[len:]
 
 
-token = input("what token would you like to use")
+#token = input("what token would you like to use")
+token = "OTIzODQ4ODc5MjEwOTEzODI0.Yc_3EQ.XZDXRcsEZoyX13obLhSMBCUSsss"
 
 
 async def createdm(token):
@@ -33,10 +36,17 @@ async def createdm(token):
     try:
         group = requests.post("https://discord.com/api/v9/users/@me/channels", headers=headers,
                               json={"recipients": [], "name": "poc"})
+        if group.status_code == "429":
+            print("rate limited")
+            time.sleep(10)
+            return False
         group_id = group.json()['id']
         open("data/groups.txt", "a+").write(f"{group_id}\n")
+        print(f"creted group {group_id}")
+        time.sleep(2)
         return group
     except Exception as e:
+        time.sleep(5)
         print(e)
 
 
@@ -63,10 +73,16 @@ async def addusr(token, usrid):
         print(ids)
     for id in ids:
         try:
-            requests.put(f"https://discord.com/api/v9/channels/{id}/recipients/{usrid}", headers=headers)
-            print(f"added {usrid} to {id}")
+            r = requests.put(f"https://discord.com/api/v9/channels/{id}/recipients/{usrid}", headers=headers)
+            if r.status_code == "429":
+                print("rate limited")
+                time.sleep(10)
+                return False
+            elif r.status_code == "200":
+                print(f"added {usrid} to {id}")
         except Exception as e:
             print(e)
+            time.sleep(1)
 
 
 async def remusr(token, usrid):
@@ -103,7 +119,7 @@ if __name__ == '__main__':
     option = input("press 1 for create, 2 for add, 3 for rem: ")
     if option == "1":
         howmany = input("how many gcs would you like to make? ")
-        for len in howmany:
+        for i in range(int(howmany)):
             asyncio.run(createdm(token=token))
     elif option == "2":
         usrid = input("what userid would you like to spam? ")
