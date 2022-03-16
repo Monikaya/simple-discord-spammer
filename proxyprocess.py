@@ -13,5 +13,6 @@ def GetProxy():
     if len(proxy.split(':')) == 4:
         splitted = proxy.split(':')
         return f"{splitted[2]}:{splitted[3]}@{splitted[0]}:{splitted[1]}"
+    print(f"proxy is: {proxy}")
 
     return proxy

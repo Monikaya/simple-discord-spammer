@@ -3,29 +3,37 @@ import os
 import random
 import string
 import proxyprocess
+import requests
+import threading
+import time
+import math
 
 try:
     from httpx import AsyncClient
     from tasksio import TaskPool
+    import requests
 except ImportError:
     os.system('pip install httpx')
     os.system('pip install tasksio')
-
+    os.system('pip install requests')
 
 
 async def rc(len):
     return os.urandom(len).hex()[len:]
 
-async def join(invcode, token, broxy):
+
+async def spam(chnlid, token, broxy, guildid, msgcontent):
+    payload = {"content": f"{msgcontent}", "nonce": "".join(random.choice(string.digits) for _ in range(18)),
+               "tts": "false"}
     headers = {
         'accept': '*/*',
-        'accept-encoding': 'gzip, deflate',
+        'accept-encoding': 'gzip, deflate, br',
         'accept-language': 'en-GB',
         'authorization': f"{token}",
         'cookie': f'__dcfduid={await rc(43)}; __sdcfduid={await rc(96)}; __stripe_mid={await rc(18)}-{await rc(4)}-{await rc(4)}-{await rc(4)}-{await rc(18)}; locale=en-GB; __cfruid={await rc(40)}-{"".join(random.choice(string.digits) for i in range(10))}',
         'content-type': 'application/json',
         'origin': 'https://discord.com',
-        'referer': f'https://discord.com/api/v9/invites/{invcode}',
+        'referer': f'https://discord.com/channels/{guildid}/{chnlid}',
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
@@ -36,35 +44,56 @@ async def join(invcode, token, broxy):
     }
 
     try:
-        res = await broxy.post(f"https://discord.com/api/v9/invites/{invcode}", headers=headers, json={}, timeout=100)
+        res = await broxy.post(f"https://discord.com/api/v9/channels/{chnlid}/messages", headers=headers, timeout=100,
+                               json=payload)
+        print(res)
         return res
     except Exception as e:
         print(e)
         pass
 
 
-async def startpp(invcode, token, proxy):
+async def startpp(chnlid, token, proxy, guildid, msgcontent):
     async with AsyncClient(proxies={'https://': 'http://' + proxy}) as broxy:
-        res = await join(invcode, token, broxy)
-    if res.status_code == 200:
-        print(f"joined server with token '{token}'")
-    else:
-        print(res.text)
+        res = await spam(chnlid, token, broxy, guildid, msgcontent)
 
 
-async def getinfo():
+#    if res.status_code == 200:
+#        print("joined server")
+#    else:
+#        print(res.text)
+
+
+async def getinfo(chnlid, tokens, guildid, msgcontent):
+    async with TaskPool(2_00) as pool:
+        for token in tokens:
+            await pool.put(startpp(chnlid, token, proxyprocess.GetProxy(), guildid, msgcontent))
+        return
+
+def between_callback(chnlid, tokens, guildid, msgcontent):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(getinfo(chnlid, tokens, guildid, msgcontent))
+    loop.close()
+
+
+def spaminit():
+    thread_list = list()
     with open('data/tokens.txt', 'r') as tokns:
         tokens = [line.rstrip('\n') for line in tokns]
     print("loaded")
 
-    invcode = input("what invite would you like to join? (last string, no discord.gg/): ")
-
-    async with TaskPool(2_00) as pool:
-        for token in tokens:
-            await pool.put(startpp(invcode, token, proxyprocess.GetProxy()))
-        input("joining done. press enter to exit! ")
-        exit()
-
-def joininit():
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(getinfo())
+    #guildid = input("what is the guild id?: ")
+    guildid = "921685604033515551"
+    #chnlid = input("what channel id would you like to spam: ")
+    chnlid = 921685604033515554
+    msgcontent = input("what would you like your message to say?: ")
+    instances = 99999999999999999999
+    for i in range(instances):
+        t = threading.Thread(target=between_callback, args=(chnlid, tokens, guildid, msgcontent))
+        t.start()
+        time.sleep(2)
+        print(t.name + ' started!')
+        thread_list.append(t)
+    for thread in thread_list:
+        thread.join()
