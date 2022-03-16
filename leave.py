@@ -87,6 +87,6 @@ async def getinfo():
         for token in tokens:
             await pool.put(startpp(invcode, token, proxyprocess.GetProxy()))
 
-if __name__ == '__main__':
+def leaveinit():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(getinfo())

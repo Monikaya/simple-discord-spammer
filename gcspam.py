@@ -11,10 +11,6 @@ def rc(len):
     return os.urandom(len).hex()[len:]
 
 
-#token = input("what token would you like to use")
-token = "OTIzODQ4ODc5MjEwOTEzODI0.Yc_3EQ.XZDXRcsEZoyX13obLhSMBCUSsss"
-
-
 async def createdm(token):
     headers = {
         'accept': '*/*',
@@ -114,7 +110,9 @@ async def remusr(token, usrid):
             print(e)
 
 
-if __name__ == '__main__':
+def gcspaminit():
+    token = input("what token would you like to use (this function only needs one): ")
+
     print("do you want to create dms(1) or add usr to dm?(2)")
     option = input("press 1 for create, 2 for add, 3 for rem: ")
     if option == "1":
@@ -126,6 +124,7 @@ if __name__ == '__main__':
         task = asyncio.get_event_loop()
         task.run_until_complete(addusr(token=token, usrid=usrid))
     elif option == "3":
-        usrid = input("what userid would you like to unspam? ")
+        usrid = input("what userid would you like to remove fron gc's? ")
         task = asyncio.get_event_loop()
         task.run_until_complete(remusr(token=token, usrid=usrid))
+
