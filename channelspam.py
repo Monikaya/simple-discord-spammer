@@ -83,10 +83,8 @@ def spaminit():
         tokens = [line.rstrip('\n') for line in tokns]
     print("loaded")
 
-    #guildid = input("what is the guild id?: ")
-    guildid = "921685604033515551"
-    #chnlid = input("what channel id would you like to spam: ")
-    chnlid = 921685604033515554
+    guildid = input("what is the guild id?: ")
+    chnlid = input("what channel id would you like to spam: ")
     msgcontent = input("what would you like your message to say?: ")
     instances = 99999999999999999999
     for i in range(instances):
