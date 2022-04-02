@@ -111,9 +111,8 @@ async def remusr(token, usrid):
 
 
 def gcspaminit():
-    token = input("what token would you like to use (this function only needs one): ")
+    token = input("What token would you like to use? (this function only uses one): ")
 
-    print("do you want to create dms(1) or add usr to dm?(2)")
     option = input("press 1 for create, 2 for add, 3 for rem: ")
     if option == "1":
         howmany = input("how many gcs would you like to make? ")

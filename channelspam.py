@@ -57,11 +57,10 @@ async def startpp(chnlid, token, proxy, guildid, msgcontent):
     async with AsyncClient(proxies={'https://': 'http://' + proxy}) as broxy:
         res = await spam(chnlid, token, broxy, guildid, msgcontent)
 
-
-#    if res.status_code == 200:
-#        print("joined server")
-#    else:
-#        print(res.text)
+    if res.status_code == 200:
+        print("sent message")
+    else:
+        print("prolly rate limited")
 
 
 async def getinfo(chnlid, tokens, guildid, msgcontent):
@@ -69,6 +68,7 @@ async def getinfo(chnlid, tokens, guildid, msgcontent):
         for token in tokens:
             await pool.put(startpp(chnlid, token, proxyprocess.GetProxy(), guildid, msgcontent))
         return
+
 
 def between_callback(chnlid, tokens, guildid, msgcontent):
     loop = asyncio.new_event_loop()
@@ -86,8 +86,8 @@ def spaminit():
     guildid = input("what is the guild id?: ")
     chnlid = input("what channel id would you like to spam: ")
     msgcontent = input("what would you like your message to say?: ")
-    instances = 99999999999999999999
-    for i in range(instances):
+    instances = True
+    while instances:
         t = threading.Thread(target=between_callback, args=(chnlid, tokens, guildid, msgcontent))
         t.start()
         time.sleep(2)
@@ -95,3 +95,4 @@ def spaminit():
         thread_list.append(t)
     for thread in thread_list:
         thread.join()
+

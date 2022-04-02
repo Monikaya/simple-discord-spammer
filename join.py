@@ -12,9 +12,9 @@ except ImportError:
     os.system('pip install tasksio')
 
 
-
 async def rc(len):
     return os.urandom(len).hex()[len:]
+
 
 async def join(invcode, token, broxy):
     headers = {
@@ -62,8 +62,9 @@ async def getinfo():
     async with TaskPool(2_00) as pool:
         for token in tokens:
             await pool.put(startpp(invcode, token, proxyprocess.GetProxy()))
-        input("joining done. press enter to exit! ")
-        exit()
+    input("joining done. press enter to exit! ")
+    exit()
+
 
 def joininit():
     loop = asyncio.get_event_loop()
