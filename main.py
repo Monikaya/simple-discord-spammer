@@ -37,7 +37,9 @@ if __name__ == '__main__':
     print("Loaded settings")
     time.sleep(1)
     os.system("clear")
-    print("what would you like to do?\n"
+    print("Simple Discord Spammer\nBy Aquazarine")
+    time.sleep(2)
+    print("What would you like to do?\n"
           "1) Spam gc's\n"
           "2) Join a server\n"
           "3) Leave a server\n"
