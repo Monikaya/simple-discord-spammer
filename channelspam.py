@@ -2,11 +2,10 @@ import asyncio
 import os
 import random
 import string
-import proxyprocess
-import requests
 import threading
 import time
-import math
+
+import proxyprocess
 
 try:
     from httpx import AsyncClient

@@ -3,7 +3,6 @@ import os
 import random
 import string
 import proxyprocess
-import requests
 
 try:
     from httpx import AsyncClient
