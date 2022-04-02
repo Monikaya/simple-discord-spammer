@@ -1,3 +1,5 @@
+import os
+import time
 import join
 import asyncio
 import gcspam
@@ -7,27 +9,34 @@ import login
 import sendfriend
 import remfriend
 
-def checkfiles():
+async def checkfiles():
+    try:
+        os.mkdir("data")
+    except FileExistsError:
+        pass
     try:
         with open('data/groups.txt', 'r'):
             pass
     except FileNotFoundError:
-        open("data/groups.txt", "a+").write(" ")
+        open("data/groups.txt", "x")
 
     try:
         with open('data/proxies.txt', 'r'):
             pass
     except FileNotFoundError:
-        open("data/proxies.txt", "a+").write(" ")
+        open("data/proxies.txt", "x")
 
     try:
         with open('data/tokens.txt', 'r'):
             pass
     except FileNotFoundError:
-        open("data/tokens.txt", "a+").write(" ")
+        open("data/tokens.txt", "x")
 
 if __name__ == '__main__':
-    checkfiles()
+    asyncio.run(checkfiles())
+    print("Loaded settings")
+    time.sleep(1)
+    os.system("clear")
     print("what would you like to do?\n"
           "1) Spam gc's\n"
           "2) Join a server\n"
@@ -35,8 +44,9 @@ if __name__ == '__main__':
           "4) Spam a channel\n"
           "5) Login to a Discord token\n"
           "6) Spam friend requests\n"
-          "7) Remove friends")
-    choice = input("Choose number that corresponds with option ")
+          "7) Remove friends\n"
+          "0) Exit program")
+    choice = input("Choose number that corresponds with option: ")
 
     if choice == "1":
         asyncio.run(gcspam.gcspaminit())
@@ -52,6 +62,8 @@ if __name__ == '__main__':
         asyncio.run(sendfriend.sendfriendinit())
     if choice == "7":
         asyncio.run(remfriend.remfriendinit())
+    if choice == "0":
+        exit()
     else:
         exit()
 
