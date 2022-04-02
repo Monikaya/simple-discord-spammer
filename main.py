@@ -4,6 +4,8 @@ import gcspam
 import leave
 import channelspam
 import login
+import sendfriend
+import remfriend
 
 def checkfiles():
     try:
@@ -31,7 +33,9 @@ if __name__ == '__main__':
           "2) Join a server\n"
           "3) Leave a server\n"
           "4) Spam a channel\n"
-          "5) Login to a Discord token")
+          "5) Login to a Discord token\n"
+          "6) Spam friend requests\n"
+          "7) Remove friends")
     choice = input("Choose number that corresponds with option ")
 
     if choice == "1":
@@ -44,6 +48,10 @@ if __name__ == '__main__':
         asyncio.run(channelspam.spaminit())
     if choice == "5":
         asyncio.run(login.main())
+    if choice == "6":
+        asyncio.run(sendfriend.sendfriendinit())
+    if choice == "7":
+        asyncio.run(remfriend.remfriendinit())
     else:
         exit()
 
